@@ -1,25 +1,26 @@
-﻿namespace ICMPC_Test.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace ICMPC_Test.Models
 {
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
 
     public class Product
     {
         [Key]
-        public int productId { get; set; }
+        public int ProductId { get; set; }
 
         [Required]
         [MaxLength(255)]
-        public string productName { get; set; }
+        public string ProductName { get; set; }
 
-        public string description { get; set; }
+        public string? Description { get; set; }
 
-        public decimal price { get; set; }
+        public double Price { get; set; }
 
         //foreign key
-        public int userId { get; set; }
+        public int UserId { get; set; }
 
-        [ForeignKey("userId")]
-        public User user { get; set; }
+        [ForeignKey("UserId")]
+        public User User { get; set; }
     }
 }

@@ -1,0 +1,10 @@
+# ASP.NET Core
+bin/
+obj/
+*.user
+*.suo
+*.vs
+.vscode/
+.env
+appsettings.Development.json
+appsettings.Production.json

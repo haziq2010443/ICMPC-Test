@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ICMPC_Test.Models
 {
-
     public class Product
     {
         [Key]

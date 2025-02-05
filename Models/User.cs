@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ICMPC_Test.Models
 {
-
     public class User
     {
         [Key]

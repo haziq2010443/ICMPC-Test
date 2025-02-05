@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ICMPC_Test.Data;
+using ICMPC_Test.Models;
 
 namespace ICMPC_Test.Controllers
 {

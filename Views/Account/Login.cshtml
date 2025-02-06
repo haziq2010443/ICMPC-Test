@@ -1,19 +1,30 @@
 ﻿@{
-	ViewData["Title"] = "Login";
+    ViewData["Title"] = "Login";
 }
-<h2>Login</h2>
 
-<form method="post">
-	<div>
-		<label>Email</label>
-		<input type="email" name="email" required />
-	</div>
-	<div>
-		<label>Password</label>
-		<input type="password" name="password" required/>
-	</div>
-	<button type="submit">Login</button>
-</form>
+<div class="container d-flex justify-content-center align-items-center flex-grow-1">
+    <div class="card shadow-lg p-4" style="width: 100%; max-width: 400px;">
+        <h2 class="text-center mb-4">Login</h2>
 
-<p>@ViewBag.Error</p>
-<a href="/Account/Register">Don't have an account? Register here'</a>
+        <form method="post">
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" name="Email" class="form-control" required />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Password</label>
+                <input type="password" name="password" class="form-control" required />
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Login</button>
+        </form>
+
+        @if (!string.IsNullOrEmpty(ViewBag.Error))
+        {
+            <div class="alert alert-danger mt-3">@ViewBag.Error</div>
+        }
+
+        <div class="text-center mt-3">
+            <a href="/Account/Register" class="text-decoration-none">Don't have an account? Register here</a>
+        </div>
+    </div>
+</div>

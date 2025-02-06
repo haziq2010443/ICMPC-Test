@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using ICMPC_Test.Data;
 using ICMPC_Test.Models;
@@ -13,25 +12,6 @@ namespace ICMPC_Test.Controllers
         public UserProductController(UserProductsContext context)
         {
             _context = context;
-        }
-
-        public async Task<IActionResult> Index(int page = 1, int pageSize = 10)
-        {
-            //Get logged-in user id 
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId == null)
-            {
-                //Return to login page if credential does not match any data
-                return RedirectToAction("Login", "Account");
-            }
-
-            var products = await _context.Products
-                .Where(p => p.UserId.ToString() == userId)
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
-
-            return View("~/Views/Admin/Dashboard.cshtml", products);
         }
 
         //Get Product By Id
@@ -72,16 +52,33 @@ namespace ICMPC_Test.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit([FromBody] Product product)
         {
-            if (product == null)
+            if (product == null || product.ProductId == 0)
             {
-                return Json(new { success = false, message = "Invalid data" });
+                return Json(new { success = false, message = "Invalid product data" });
             }
 
-            _context.Products.Update(product);
-            await _context.SaveChangesAsync();
+            var existingProduct = await _context.Products.FindAsync(product.ProductId);
+            if (existingProduct == null)
+            {
+                return Json(new { success = false, message = "Product not found" });
+            }
 
-            return Json(new { success = true });
+            // Update the existing product instead of passing a new object
+            existingProduct.ProductName = product.ProductName;
+            existingProduct.Description = product.Description;
+            existingProduct.Price = product.Price;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
         }
+
 
         //Delete Product from DB
         [HttpDelete]

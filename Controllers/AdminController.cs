@@ -16,10 +16,30 @@ namespace ICMPC_Test.Controllers
             _context = context;
         }
 
-        public IActionResult Dashboard()
+        public IActionResult Dashboard(int page = 1)
         {
-            var products = _context.Products.ToList();
-            return View(products);
+            //Number of items per page
+            int pageSize = 5;
+
+            //Fetch product for current page
+            var products = _context.Products
+                                    .Skip((page - 1) * pageSize)
+                                    .Take(pageSize)
+                                    .ToList();
+
+            //Calculate number of pages
+            var totalProducts = _context.Products.Count();
+            var totalPages = (int)Math.Ceiling((double)totalProducts / pageSize);
+
+            //Return paginated data to view Model
+            var model = new PaginatedProductsViewModel
+            {
+                Products = products,
+                CurrentPage = page,
+                TotalPages = totalPages
+            };
+
+            return View(model);
         }
     }
 }

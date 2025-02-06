@@ -22,45 +22,37 @@ Ensure you have the following installed before running the project:
 
 ### 1. Clone the Repository
 ```sh
-git clone https://github.com/yourusername/ICMPC-WebApp.git
-cd ICMPC-WebApp
+git clone https://github.com/your-repo/ICMPC_Test.git
+cd ICMPC_Test
 ```
 
-### 2. Configure Database
-- Import the provided **SQL script** into MySQL Server:
+### 2. Database Setup
+- The SQL script to create the required database and tables is provided in the `SQL script` folder.
+- Execute the script in your MySQL server to set up the database.
 
-  1. Open MySQL Workbench or command line.
-  2. Create a new database:
-     ```sql
-     CREATE DATABASE ICMPCDb;
-     ```
-  3. Use the database:
-     ```sql
-     USE ICMPCDb;
-     ```
-  4. Import the `ICMPCDb.sql` file provided in the `SQL script` folder:
-     ```sh
-     mysql -u root -p ICMPCDb < ICMPCDb.sql
-     ```
-
-### 3. Update Connection String
-Modify `appsettings.json` to match your MySQL credentials:
-```json
-"ConnectionStrings": {
-    "DefaultConnection": "Server=localhost;Database=ICMPCDb;User=root;Password=yourpassword;"
-}
-```
-
-### 4. Run Database Migrations (if needed)
+### 3. Run Database Migration
+To ensure the database is up to date and includes the default admin account, run:
 ```sh
 dotnet ef database update
+```
+This will apply any pending migrations and create the `admin@example.com` account with password `admin123`.
+
+### 4. Configure the Application
+- Update `appsettings.json` with your database connection string.
+```json
+"ConnectionStrings": {
+  "DefaultConnection": "server=localhost;database=ICMPC_Test;user=root;password=yourpassword;"
+}
 ```
 
 ### 5. Run the Application
 ```sh
+dotnet restore
+dotnet build
 dotnet run
 ```
-- The application will be accessible at `http://localhost:5000`
+
+The application will be available at `http://localhost:5000`.
 
 ## Flowchart
 The flowchart below illustrates the architecture and workflow of the application:

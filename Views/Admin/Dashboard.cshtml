@@ -1,0 +1,36 @@
+﻿@model IEnumerable<Product>
+
+@{
+	ViewData["Title"] = "Admin Dashboard";
+}
+
+<h2>Admin Dashboard</h2>
+
+<table class="table">
+	<thead>
+		<tr>
+			<th>Product Name</th>
+			<th>Description</th>
+			<th>Price</th>
+			<th>Actions</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var product in Model)
+		{
+			<tr>
+				<td>@product.ProductName</td>
+				<td>@product.Description</td>
+				<td>@product.Price</td>
+				<td>
+					<a href="@Url.Action("Details", "UserProduct", new { id = product.ProductId })" class="btn btn-info">See Details</a>
+					<a href="@Url.Action("Edit", "UserProduct", new { id = product.ProductId })" class="btn btn-warning">Edit</a>
+					<form method="post" action="@Url.Action("Delete", "UserProduct")" style="display:inline">
+						<input type="hidden" name="id" value="@product.ProductId" />
+						<button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
+					</form>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>

@@ -5,27 +5,39 @@ namespace ICMPC_Test.Data
 {
     public class UserProductsContext : DbContext
     {
-        public UserProductsContext( DbContextOptions<UserProductsContext> options ) : base(options)
-        { }
+        public UserProductsContext(DbContextOptions<UserProductsContext> options) : base(options) { }
 
-        public DbSet<User> Users { get; set; } //Get user attributes from User model
-        public DbSet<Product> Products { get; set; } //Get product attributes from Product model
+        public DbSet<User> Users { get; set; }
+        public DbSet<Product> Products { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //One-to-many relationship between User and Product
-            modelBuilder.Entity<User>()
-                .HasMany(user => user.Products)
-                .WithOne(product => product.User)
-                .HasForeignKey(product => product.UserId);
-
-            //modelBuilder.Entity<Product>().HasData(
-            //    new Product { ProductId = 1, ProductName = "Nintendo Switch", Price = 1200.00 }
-            //    );
-            //modelBuilder.Entity<User>().HasData(
-            //    new User { }
-            //    );
             base.OnModelCreating(modelBuilder);
+
+            var adminId = 1;
+
+            modelBuilder.Entity<User>().HasData(new User
+            {
+                UserId = adminId,
+                UserName = "Admin",
+                Email = "admin@example.com",
+                PasswordHash = "$2a$11$7Qy5wIxiPIuokfKhFwKAMOIRY8N5p9N40XNDX4wLopzAdprdiBeRm" // Precomputed hash of "Admin123"
+            });
+
+            // Generate 30 products
+            var products = new List<Product>();
+            for (int i = 1; i <= 30; i++)
+            {
+                products.Add(new Product
+                {
+                    ProductId = i,
+                    UserId = adminId,
+                    ProductName = $"Product {i}",
+                    Description = $"Description for product {i}",
+                    Price = i * 10
+                });
+            }
+            modelBuilder.Entity<Product>().HasData(products);
         }
     }
 }

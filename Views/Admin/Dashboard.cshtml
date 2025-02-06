@@ -4,7 +4,10 @@
 	ViewData["Title"] = "Admin Dashboard";
 }
 
-<h2>Admin Dashboard</h2>
+<div class="d-flex justify-content-between align-items-center">
+	<h2>Admin Dashboard</h2>
+	<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal">Add Product</button>
+</div>
 
 <table class="table">
 	<thead>
@@ -23,14 +26,197 @@
 				<td>@product.Description</td>
 				<td>@product.Price</td>
 				<td>
-					<a href="@Url.Action("Details", "UserProduct", new { id = product.ProductId })" class="btn btn-info">See Details</a>
-					<a href="@Url.Action("Edit", "UserProduct", new { id = product.ProductId })" class="btn btn-warning">Edit</a>
-					<form method="post" action="@Url.Action("Delete", "UserProduct")" style="display:inline">
-						<input type="hidden" name="id" value="@product.ProductId" />
-						<button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
-					</form>
+					<button class="btn btn-info" onclick="openDetailsModal(@product.ProductId)">See Details</button>
+					<button class="btn btn-warning" onclick="openEditModal(@product.ProductId)">Edit</button>
+					<button class="btn btn-danger" onclick="deleteProduct(@product.ProductId)">Delete</button>
 				</td>
 			</tr>
 		}
 	</tbody>
 </table>
+
+<!-- Add Product Modal -->
+<div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="addProductLabel">Add Product</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<form id="addProductForm">
+					<div class="mb-3">
+						<label for="productName" class="form-label">Product Name</label>
+						<input type="text" class="form-control" id="productName" required />
+					</div>
+					<div class="mb-3">
+						<label for="description" class="form-label">Description</label>
+						<textarea class="form-control" id="description"></textarea>
+					</div>
+					<div class="mb-3">
+						<label for="price" class="form-label">Price</label>
+						<input type="number" class="form-control" id="price" required />
+					</div>
+					<button type="submit" class="btn btn-success">Add</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- See Details Modal -->
+<div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="detailsLabel">Product Details</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<p><strong>Name:</strong> <span id="detailsProductName"></span></p>
+				<p><strong>Description:</strong> <span id="detailsDescription"></span></p>
+				<p><strong>Price:</strong> <span id="detailsPrice"></span></p>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Edit Product Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="editLabel">Edit Product</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<form id="editProductForm">
+					<input type="hidden" id="editProductId" />
+					<div class="mb-3">
+						<label for="editProductName" class="form-label" >Product Name</label>
+						<input type="text" class="form-control" id="editProductName" required />
+					</div>
+					<div class="mb-3">
+						<label for="editDescription" class="form-label">Description</label>
+						<textarea class="form-control" id="editDescription"></textarea>
+					</div>
+					<div class="mb-3">
+						<label for="editPrice" class="form-label" >Price</label>
+						<input type="number" class="form-control" id="editPrice" required />
+					</div>
+					<button type="submit" class="btn btn-success">Save Changes</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts {
+	<script>
+		//Handle Add New Product
+		document.getElementById("addProductForm").addEventListener("submit", function (e) {
+			e.preventDefault();
+
+			let productData = {
+				ProductName: document.getElementById("productName").value,
+				Description: document.getElementById("description").value,
+				Price: parseFloat(document.getElementById("price").value) || 0,
+			};
+
+			fetch("/UserProduct/AddProduct", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"X-Requested-With": "XMLHttpRequest"
+				},
+				body: JSON.stringify(productData)
+			})
+			.then(response => response.json())
+			.then(data => {
+				if (data.success) {
+					alert("Product added successfully!");
+					location.reload();
+				} else {
+					alert("Failed to add product.");
+				}
+			})
+			.catch(error => console.error("Error:", error));
+		});
+
+		 // Open "See Details" Modal
+        function openDetailsModal(productId) {
+            fetch(`/UserProduct/ProductById/${productId}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("detailsProductName").innerText = data.productName;
+                    document.getElementById("detailsDescription").innerText = data.description;
+                    document.getElementById("detailsPrice").innerText = data.price;
+                    new bootstrap.Modal(document.getElementById("detailsModal")).show();
+                })
+                .catch(error => console.error("Error:", error));
+        }
+
+		//Open Edit Modal and set value for form
+		function openEditModal(productId) {
+			fetch(`/UserProduct/ProductById/${productId}`)
+				.then(response => response.json())
+				.then(data => {
+					document.getElementById("editProductId").value = data.productId;
+					document.getElementById("editProductName").value = data.productName;
+					document.getElementById("editDescription").value = data.description;
+					document.getElementById("editPrice").value = data.price;
+					new bootstrap.Modal(document.getElementById("editModal")).show();
+				})
+				.catch(error => console.error("Error:", error));
+		}
+
+		//Handle Edit Product
+		document.getElementById("editProductForm").addEventListener("submit", function (e) {
+			e.preventDefault();
+
+			let productData = {
+				ProductId: document.getElementById("editProductId").value,
+				ProductName: document.getElementById("editProductName").value,
+				Description: document.getElementById("editDescription").value,
+				Price: document.getElementById("editPrice").value
+			};
+
+			fetch(`/UserProduct/Edit`, {
+				method: "POST",
+				headers: {"Content-Type": "application/json"},
+				body: JSON.stringify(productData)
+			})
+			.then(response => response.json())
+			.then(data => {
+				if(data.success) {
+					alert("Product updated successfully!");
+					location.reload();
+				} else {
+					alert("Failed to update product.")
+				}
+			})
+			.catch(error => console.error("Error:", error));
+		});
+
+
+        // Handle "Delete Product"
+        function deleteProduct(productId) {
+            if (!confirm("Are you sure you want to delete this product?")) return;
+
+            fetch(`/UserProduct/Delete/${productId}`, {
+                method: "DELETE"
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Product deleted successfully!");
+                    location.reload();
+                } else {
+                    alert("Failed to delete product.");
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        }
+	</script>
+}
+

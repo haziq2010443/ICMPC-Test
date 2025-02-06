@@ -21,7 +21,7 @@ namespace ICMPC_Test.Data
                 UserId = adminId,
                 UserName = "Admin",
                 Email = "admin@example.com",
-                PasswordHash = "$2a$11$7Qy5wIxiPIuokfKhFwKAMOIRY8N5p9N40XNDX4wLopzAdprdiBeRm" // Precomputed hash of "Admin123"
+                PasswordHash = "$2a$12$9HzWcMXJlvqyQzqekyHtPeFlFvRz0QNv21yN3HW1Ytbn2j6QZobCq" // Precomputed hash of "admin123"
             });
 
             // Generate 30 products

@@ -32,22 +32,22 @@ cd ICMPC-WebApp
   1. Open MySQL Workbench or command line.
   2. Create a new database:
      ```sql
-     CREATE DATABASE icmpc_db;
+     CREATE DATABASE ICMPCDb;
      ```
   3. Use the database:
      ```sql
-     USE icmpc_db;
+     USE ICMPCDb;
      ```
   4. Import the `ICMPCDb.sql` file provided in the `SQL script` folder:
      ```sh
-     mysql -u root -p icmpc_db < ICMPCDb.sql
+     mysql -u root -p ICMPCDb < ICMPCDb.sql
      ```
 
 ### 3. Update Connection String
 Modify `appsettings.json` to match your MySQL credentials:
 ```json
 "ConnectionStrings": {
-    "DefaultConnection": "Server=localhost;Database=icmpc_db;User=root;Password=yourpassword;"
+    "DefaultConnection": "Server=localhost;Database=ICMPCDb;User=root;Password=yourpassword;"
 }
 ```
 
@@ -65,7 +65,7 @@ dotnet run
 ## Flowchart
 The flowchart below illustrates the architecture and workflow of the application:
 
-![System Flowchart](ICMPCTestFlowChart.png)
+![System Flowchart](System%20Flowchart/ICMPCTestFlowChart.png)
 
 ## API Endpoints
 | Endpoint             | Method | Description                     |
